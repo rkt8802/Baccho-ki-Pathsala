@@ -69,7 +69,7 @@ fun WelcomeScreen(
         colors = listOf(
             Color(0xFFFFFDE7), // Soft yellow top
             Color(0xFFFFF9C4), // Warm light gold center
-            Color(0xFFFFECB3)  # Rich child amber base
+            Color(0xFFFFECB3)  // Rich child amber base
         )
     )
 
