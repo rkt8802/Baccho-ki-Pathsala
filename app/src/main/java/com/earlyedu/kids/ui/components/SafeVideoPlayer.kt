@@ -27,7 +27,7 @@ import androidx.compose.ui.viewinterop.AndroidView
  */
 @SuppressLint("SetJavaScriptEnabled")
 @Composable
-ComposableSafeVideoPlayer(
+fun ComposableSafeVideoPlayer(
     youtubeVideoId: String,
     modifier: Modifier = Modifier
 ) {
