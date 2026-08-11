@@ -123,7 +123,7 @@ fun HomeScreen(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
-            GradeLevel.values().forEach { level ->
+            GradeLevel.values().toList().forEach { level ->
                 val isSelected = level == selectedGrade
                 val btnColor = if (isSelected) Color(0xFFFF6F00) else Color.White
                 val txtColor = if (isSelected) Color.White else Color.DarkGray
@@ -153,7 +153,7 @@ fun HomeScreen(
             verticalArrangement = Arrangement.spacedBy(16.dp),
             modifier = Modifier.fillMaxSize()
         ) {
-            items(SubjectType.values()) { subject ->
+            items(SubjectType.values().toList()) { subject ->
                 SubjectCard(
                     subject = subject,
                     currentLanguage = currentLanguage,
