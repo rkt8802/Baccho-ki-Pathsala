@@ -1,0 +1,16 @@
+workflows:
+  android-apk-build:
+    name: Build Baccho ki Pathsala Android APK
+    instance_type: mac_mini_m1
+    environment:
+      java: 17
+    scripts:
+      - name: Set up Gradle Wrapper
+        script: |
+          gradle wrapper --gradle-version 8.2
+          chmod +x gradlew
+      - name: Build Android APK
+        script: |
+          ./gradlew assembleDebug --no-daemon
+    artifacts:
+      - app/build/outputs/apk/**/*.apk
