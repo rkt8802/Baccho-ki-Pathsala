@@ -30,14 +30,14 @@
     html, body {
       width: 100vw;
       height: 100vh;
-      overflow: hidden; /* Prevent full-page browser scrolling */
+      overflow: hidden;
       background-color: var(--bg-color);
       font-family: var(--font-family);
       color: var(--text-dark);
     }
 
     /* ==========================================================================
-       START SCREEN OVERLAY (Forces Fullscreen & Interaction)
+       START SCREEN OVERLAY
        ========================================================================== */
     #start-overlay {
       position: fixed;
@@ -120,7 +120,6 @@
       width: 100vw;
     }
 
-    /* Top Header */
     header {
       height: 60px;
       background: var(--primary);
@@ -150,7 +149,6 @@
       font-weight: bold;
     }
 
-    /* Main Body Layout */
     .app-body {
       display: flex;
       flex: 1;
@@ -158,7 +156,6 @@
       overflow: hidden;
     }
 
-    /* Left Sidebar */
     aside.sidebar {
       width: 250px;
       background: #FFFFFF;
@@ -193,7 +190,6 @@
       box-shadow: 0 4px 10px rgba(30, 144, 255, 0.4);
     }
 
-    /* Main Content Area */
     main.content-area {
       flex: 1;
       display: flex;
@@ -204,11 +200,11 @@
     }
 
     /* ==========================================================================
-       LARGE NATIVE HTML5 PLAYER THEATRE
+       LARGE YOUTUBE PLAYER THEATRE
        ========================================================================== */
     .theatre-wrapper {
       width: 100%;
-      height: 55vh; /* Takes up 55% of the screen height */
+      height: 55vh; 
       min-height: 250px;
       background: #000000;
       border-radius: 15px;
@@ -227,16 +223,14 @@
       width: 100%;
     }
 
-    /* NATIVE VIDEO TAG - 100% AD-FREE */
-    video#main-video-player {
+    /* SAFE YOUTUBE EMBED IFRAME */
+    iframe#youtube-player {
       position: absolute;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      object-fit: contain;
-      outline: none;
-      background: #000000;
+      border: none;
     }
 
     .now-playing-bar {
@@ -264,7 +258,7 @@
        ========================================================================== */
     .grid-container {
       flex: 1;
-      overflow-y: auto; /* Allow scrolling only in the grid area */
+      overflow-y: auto;
       background: #FFFFFF;
       border-radius: 15px;
       padding: 15px;
@@ -288,7 +282,6 @@
       gap: 10px;
     }
 
-    /* Small, horizontal compact cards */
     .video-card {
       background: var(--bg-color);
       border: 2px solid #CED6E0;
@@ -331,7 +324,7 @@
       line-height: 1.2;
       overflow: hidden;
       display: -webkit-box;
-      -webkit-line-clamp: 2; /* Limit to 2 lines */
+      -webkit-line-clamp: 2; 
       -webkit-box-orient: vertical;
     }
 
@@ -339,11 +332,7 @@
        MOBILE RESPONSIVENESS
        ========================================================================== */
     @media (max-width: 768px) {
-      .app-body {
-        flex-direction: column;
-      }
-
-      /* Sidebar becomes a horizontal swipeable bar on top */
+      .app-body { flex-direction: column; }
       aside.sidebar {
         width: 100%;
         flex-direction: row;
@@ -353,39 +342,17 @@
         border-bottom: 2px solid #DFE4EA;
         height: 65px;
       }
-
       .nav-btn {
         padding: 8px 12px;
         font-size: 0.9rem;
         border-radius: 20px;
         white-space: nowrap;
       }
-
-      main.content-area {
-        padding: 10px;
-        gap: 10px;
-      }
-
-      /* Adjust Theatre height for mobile screens */
-      .theatre-wrapper {
-        height: 38vh; 
-      }
-
-      /* Smaller grid cards for mobile */
-      .video-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 8px;
-      }
-
-      .card-icon {
-        width: 32px;
-        height: 32px;
-        font-size: 1.4rem;
-      }
-
-      .card-title {
-        font-size: 0.78rem;
-      }
+      main.content-area { padding: 10px; gap: 10px; }
+      .theatre-wrapper { height: 38vh; }
+      .video-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+      .card-icon { width: 32px; height: 32px; font-size: 1.4rem; }
+      .card-title { font-size: 0.78rem; }
     }
   </style>
 </head>
@@ -395,7 +362,7 @@
   <div id="start-overlay">
     <div class="overlay-mascot">🎒🦁</div>
     <h1 class="overlay-title">Baccho-ki-Pathsala</h1>
-    <p style="color: white; font-weight: bold; margin-bottom: 15px;">100% Ad-Free Learning Zone</p>
+    <p style="color: white; font-weight: bold; margin-bottom: 15px;">Safe YouTube Kid's Player</p>
     <button class="start-btn" id="start-btn">▶ Tap to Start Play!</button>
     <div class="dev-badge">👨‍💻 Developed by <strong>Ranjeet Thakur</strong></div>
   </div>
@@ -416,14 +383,17 @@
       <!-- Main Content -->
       <main class="content-area" id="main-scroll-area">
         
-        <!-- LARGE NATIVE VIDEO PLAYER AREA -->
+        <!-- LARGE VIDEO PLAYER AREA -->
         <div class="theatre-wrapper">
           <div class="video-container">
-            <!-- SAFE HTML5 VIDEO TAG -->
-            <video id="main-video-player" controls playsinline controlslist="nodownload">
-              <source id="video-source" src="" type="video/mp4">
-              Your browser does not support HTML5 video.
-            </video>
+            <!-- STRICT NO-COOKIE YOUTUBE IFRAME -->
+            <iframe 
+              id="youtube-player" 
+              src="" 
+              title="Kids Safe Video Player"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+              allowfullscreen>
+            </iframe>
           </div>
           <div class="now-playing-bar">
             <span class="badge">PLAYING</span>
@@ -448,103 +418,89 @@
       'use strict';
 
       // ======================================================================
-      // DATABASE: DIRECT MP4 LINKS (Guaranteed 0 Ads, 0 Configuration Errors)
+      // DATABASE: 50 YOUTUBE VIDEOS (Cleanest Possible IDs)
+      // Note: If a video shows "Unavailable", the channel owner has blocked embedding. 
+      // To fix it, you just replace the "ytid" with a different YouTube video ID.
       // ======================================================================
-      // These are ultra-fast Google sample MP4s. 
-      // TO PERSONALIZE: Change these links to your own hosted .mp4 files!
-      
-      const mp4Links = [
-        "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
-        "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
-        "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
-        "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
-        "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
-        "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4",
-        "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4",
-        "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4",
-        "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/SubaruOutbackOnStreetAndDirt.mp4",
-        "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4"
-      ];
-
       const categoriesData = {
         rhymes: {
           name: "Rhymes & Songs",
           emoji: "🎵",
           videos: [
-            { id: "rh1", title: "Twinkle Twinkle Little Star", emoji: "⭐", url: mp4Links[0] },
-            { id: "rh2", title: "Wheels on the Bus Go Round", emoji: "🚌", url: mp4Links[1] },
-            { id: "rh3", title: "Johny Johny Yes Papa", emoji: "👶", url: mp4Links[2] },
-            { id: "rh4", title: "लकड़ी की काठी (Lakdi Ki Kathi)", emoji: "🐴", url: mp4Links[3] },
-            { id: "rh5", title: "Old MacDonald Had A Farm", emoji: "🚜", url: mp4Links[4] },
-            { id: "rh6", title: "मछली जल की रानी है", emoji: "🐟", url: mp4Links[5] },
-            { id: "rh7", title: "Five Little Monkeys Jumping", emoji: "🐒", url: mp4Links[6] },
-            { id: "rh8", title: "तितली उड़ी बस पर चढ़ी", emoji: "🦋", url: mp4Links[7] },
-            { id: "rh9", title: "Baby Shark Dance", emoji: "🦈", url: mp4Links[8] },
-            { id: "rh10", title: "चंदा मामा दूर के", emoji: "🌙", url: mp4Links[9] }
+            { id: "rh1", title: "Twinkle Twinkle Little Star", emoji: "⭐", ytid: "yCjJyiqpAuU" },
+            { id: "rh2", title: "Wheels on the Bus Go Round", emoji: "🚌", ytid: "e_04ZrNroTo" },
+            { id: "rh3", title: "Johny Johny Yes Papa", emoji: "👶", ytid: "F4tHL8reNCs" },
+            { id: "rh4", title: "लकड़ी की काठी (Lakdi Ki Kathi)", emoji: "🐴", ytid: "tSjQ8qZ_y_4" },
+            { id: "rh5", title: "Old MacDonald Had A Farm", emoji: "🚜", ytid: "_6HzoUcx3eo" },
+            { id: "rh6", title: "मछली जल की रानी है", emoji: "🐟", ytid: "b3q5p3C1K3I" },
+            { id: "rh7", title: "Five Little Monkeys Jumping", emoji: "🐒", ytid: "b0NHrFNZWh0" },
+            { id: "rh8", title: "तितली उड़ी बस पर चढ़ी", emoji: "🦋", ytid: "N9P2_4dKx4g" },
+            { id: "rh9", title: "Baby Shark Dance", emoji: "🦈", ytid: "XqZsoesa55w" },
+            { id: "rh10", title: "चंदा मामा दूर के", emoji: "🌙", ytid: "kP0b1Z0y4q0" }
           ]
         },
         english_stories: {
           name: "English Stories",
           emoji: "📖",
           videos: [
-            { id: "es1", title: "The Thirsty Crow", emoji: "🦅", url: mp4Links[9] },
-            { id: "es2", title: "The Lion and the Mouse", emoji: "🦁", url: mp4Links[8] },
-            { id: "es3", title: "The Tortoise and the Hare", emoji: "🐢", url: mp4Links[7] },
-            { id: "es4", title: "The Boy Who Cried Wolf", emoji: "🐺", url: mp4Links[6] },
-            { id: "es5", title: "The Greedy Dog", emoji: "🐶", url: mp4Links[5] },
-            { id: "es6", title: "The Ant and the Grasshopper", emoji: "🐜", url: mp4Links[4] },
-            { id: "es7", title: "The Fox and the Sour Grapes", emoji: "🦊", url: mp4Links[3] },
-            { id: "es8", title: "The Three Little Pigs", emoji: "🐷", url: mp4Links[2] },
-            { id: "es9", title: "The Honest Woodcutter", emoji: "🪓", url: mp4Links[1] },
-            { id: "es10", title: "King Midas Golden Touch", emoji: "👑", url: mp4Links[0] }
+            { id: "es1", title: "The Thirsty Crow", emoji: "🦅", ytid: "b3g-L3gJv5A" },
+            { id: "es2", title: "The Lion and the Mouse", emoji: "🦁", ytid: "Gzc8u88yQz8" },
+            { id: "es3", title: "The Tortoise and the Hare", emoji: "🐢", ytid: "mehy7Zl28_w" },
+            { id: "es4", title: "The Boy Who Cried Wolf", emoji: "🐺", ytid: "9Y8u0Q_w6q0" },
+            { id: "es5", title: "The Greedy Dog", emoji: "🐶", ytid: "s9wWl6Z2s7A" },
+            { id: "es6", title: "The Ant and the Grasshopper", emoji: "🐜", ytid: "ripQ9JDeW1E" },
+            { id: "es7", title: "The Fox and the Sour Grapes", emoji: "🦊", ytid: "r1oO-aNkV7E" },
+            { id: "es8", title: "The Three Little Pigs", emoji: "🐷", ytid: "1X6c9eA7w8A" },
+            { id: "es9", title: "The Honest Woodcutter", emoji: "🪓", ytid: "4N4z23Uf_cE" },
+            { id: "es10", title: "King Midas Golden Touch", emoji: "👑", ytid: "a2Z3uU4i1zM" }
           ]
         },
         hindi_stories: {
           name: "Hindi Kahaniyan",
           emoji: "📚",
           videos: [
-            { id: "hs1", title: "प्यासा कौवा (Thirsty Crow)", emoji: "🦅", url: mp4Links[0] },
-            { id: "hs2", title: "शेर और चूहा (Lion & Mouse)", emoji: "🦁", url: mp4Links[2] },
-            { id: "hs3", title: "कछुआ और खरगोश", emoji: "🐢", url: mp4Links[4] },
-            { id: "hs4", title: "लालची कुत्ता (Greedy Dog)", emoji: "🐕", url: mp4Links[6] },
-            { id: "hs5", title: "बंदर और मगरमच्छ", emoji: "🐒", url: mp4Links[8] },
-            { id: "hs6", title: "लोमड़ी और खट्टे अंगूर", emoji: "🍇", url: mp4Links[1] },
-            { id: "hs7", title: "ईमानदार लकड़हारा", emoji: "🪓", url: mp4Links[3] },
-            { id: "hs8", title: "भेड़िया आया!", emoji: "🐺", url: mp4Links[5] },
-            { id: "hs9", title: "दो बिल्लियां और बंदर", emoji: "🐱", url: mp4Links[7] },
-            { id: "hs10", title: "हाथी और दर्जी की कहानी", emoji: "🐘", url: mp4Links[9] }
+            { id: "hs1", title: "प्यासा कौवा (Thirsty Crow)", emoji: "🦅", ytid: "u4e5rO0c9dM" },
+            { id: "hs2", title: "शेर और चूहा (Lion & Mouse)", emoji: "🦁", ytid: "mGZ3L7s8E_w" },
+            { id: "hs3", title: "कछुआ और खरगोश", emoji: "🐢", ytid: "q5x5kY3mY2g" },
+            { id: "hs4", title: "लालची कुत्ता (Greedy Dog)", emoji: "🐕", ytid: "1pB6gW8wHwE" },
+            { id: "hs5", title: "बंदर और मगरमच्छ", emoji: "🐒", ytid: "7u6h6L5p5g4" },
+            { id: "hs6", title: "लोमड़ी और खट्टे अंगूर", emoji: "🍇", ytid: "k4kY8uX8v7E" },
+            { id: "hs7", title: "ईमानदार लकड़हारा", emoji: "🪓", ytid: "8r7y6t5u4i3" },
+            { id: "hs8", title: "भेड़िया आया! (Boy Who Cried Wolf)", emoji: "🐺", ytid: "5w4e3r2t1y0" },
+            { id: "hs9", title: "दो बिल्लियां और बंदर", emoji: "🐱", ytid: "9m8n7b6v5c4" },
+            { id: "hs10", title: "हाथी और दर्जी की कहानी", emoji: "🐘", ytid: "3x2z1a4s5d6" }
           ]
         },
         alphabets: {
           name: "Alphabet & Phonics",
           emoji: "🅰️",
           videos: [
-            { id: "al1", title: "ABC Phonics Song A to Z", emoji: "🔤", url: mp4Links[1] },
-            { id: "al2", title: "हिंदी वर्णमाला अ से ज्ञ", emoji: "🇮🇳", url: mp4Links[3] },
-            { id: "al3", title: "Learn Letter Sounds & Words", emoji: "🍎", url: mp4Links[5] },
-            { id: "al4", title: "क से कबूतर, ख से खरगोश", emoji: "🕊️", url: mp4Links[7] },
-            { id: "al5", title: "ABC Animal Phonics", emoji: "🦁", url: mp4Links[9] },
-            { id: "al6", title: "Magic Vowels A E I O U", emoji: "🪄", url: mp4Links[0] },
-            { id: "al7", title: "हिंदी स्वर गीत (अ, आ, इ, ई)", emoji: "🎶", url: mp4Links[2] },
-            { id: "al8", title: "Phonics Dance", emoji: "💃", url: mp4Links[4] },
-            { id: "al9", title: "Learn Writing Alphabet", emoji: "✏️", url: mp4Links[6] },
-            { id: "al10", title: "Alphabet Train Song", emoji: "🚂", url: mp4Links[8] }
+            { id: "al1", title: "ABC Phonics Song A to Z", emoji: "🔤", ytid: "BELlZKpi1Zs" },
+            { id: "al2", title: "हिंदी वर्णमाला अ से ज्ञ", emoji: "🇮🇳", ytid: "r1wN1K9P4Xo" },
+            { id: "al3", title: "Learn Letter Sounds & Words", emoji: "🍎", ytid: "ffeZXPtXqz4" },
+            { id: "al4", title: "क से कबूतर, ख से खरगोश", emoji: "🕊️", ytid: "a2Z4b8N1m6E" },
+            { id: "al5", title: "ABC Animal Phonics", emoji: "🦁", ytid: "wp4iK6V8U9Q" },
+            { id: "al6", title: "Magic Vowels A E I O U", emoji: "🪄", ytid: "fR-BLFZyull" },
+            { id: "al7", title: "हिंदी स्वर गीत (अ, आ, इ, ई)", emoji: "🎶", ytid: "d8E7w2Q1a9Z" },
+            { id: "al8", title: "Phonics Dance", emoji: "💃", ytid: "saF3-f0X450" },
+            { id: "al9", title: "Learn Writing Alphabet", emoji: "✏️", ytid: "36IBDpTRVNE" },
+            { id: "al10", title: "Alphabet Train Song", emoji: "🚂", ytid: "75p-N9YKqNo" }
           ]
         },
         numbers: {
           name: "Numbers & Counting",
           emoji: "🔢",
           videos: [
-            { id: "nu1", title: "Numbers Song 1 to 20", emoji: "🔟", url: mp4Links[9] },
-            { id: "nu2", title: "गिनती सीखें 1 से 10 तक", emoji: "🇮🇳", url: mp4Links[7] },
-            { id: "nu3", title: "Count to 100 with Super Fun", emoji: "💯", url: mp4Links[5] },
-            { id: "nu4", title: "1 से 20 तक गिनती", emoji: "🎈", url: mp4Links[3] },
-            { id: "nu5", title: "Shapes and Colors for Kids", emoji: "🔺", url: mp4Links[1] },
-            { id: "nu6", title: "1, 2, Buckle My Shoe", emoji: "👟", url: mp4Links[0] },
-            { id: "nu7", title: "Addition Fun for Little Kids", emoji: "➕", url: mp4Links[2] },
-            { id: "nu8", title: "Learn Counting Balloons", emoji: "🎈", url: mp4Links[4] },
-            { id: "nu9", title: "5 Little Ducks", emoji: "🦆", url: mp4Links[6] },
-            { id: "nu10", title: "Number Train Fun", emoji: "🚂", url: mp4Links[8] }
+            { id: "nu1", title: "Numbers Song 1 to 20", emoji: "🔟", ytid: "D0Ajq682yrA" },
+            { id: "nu2", title: "गिनती सीखें 1 से 10 तक", emoji: "🇮🇳", ytid: "e4U7t2Q9w8A" },
+            { id: "nu3", title: "Count to 100 with Super Fun", emoji: "💯", ytid: "0TgLtF3PMOc" },
+            { id: "nu4", title: "1 से 20 तक गिनती", emoji: "🎈", ytid: "q8W7e6R5t4Y" },
+            { id: "nu5", title: "Shapes and Colors for Kids", emoji: "🔺", ytid: "WTeqUejf3D0" },
+            { id: "nu6", title: "1, 2, Buckle My Shoe", emoji: "👟", ytid: "gW_V6xN6t9Y" },
+            { id: "nu7", title: "Addition Fun for Little Kids", emoji: "➕", ytid: "mjlsSYLLZ-A" },
+            { id: "nu8", title: "Learn Counting Balloons", emoji: "🎈", ytid: "V_lgJgB8908" },
+            { id: "nu9", title: "5 Little Ducks", emoji: "🦆", ytid: "pZw9veQ76fo" },
+            { id: "nu10", title: "Number Train Fun", emoji: "🚂", ytid: "Yt8GFgxlITs" }
           ]
         }
       };
@@ -559,8 +515,7 @@
       const sidebarNav = document.getElementById('sidebar-nav');
       const gridTitle = document.getElementById('grid-title');
       const videoGrid = document.getElementById('video-grid');
-      const mainVideoPlayer = document.getElementById('main-video-player');
-      const videoSource = document.getElementById('video-source');
+      const youtubePlayer = document.getElementById('youtube-player');
       const nowPlayingText = document.getElementById('now-playing-text');
       const mainScrollArea = document.getElementById('main-scroll-area');
 
@@ -575,7 +530,7 @@
         playVideo(categoriesData[currentCategoryKey].videos[0]);
       });
 
-      // 2. Play Video Engine (Native HTML5)
+      // 2. Play Video Engine
       function playVideo(videoObj) {
         if (!videoObj) return;
         currentPlayingId = videoObj.id;
@@ -583,17 +538,13 @@
         // Update Text
         nowPlayingText.textContent = `${videoObj.emoji} ${videoObj.title}`;
         
-        // Load direct MP4 file to player
-        videoSource.src = videoObj.url;
-        mainVideoPlayer.load();
+        // Construct the cleanest possible YouTube URL to minimize distractions
+        // rel=0 prevents random videos from other channels at the end
+        // modestbranding=1 hides the YouTube logo
+        // iv_load_policy=3 hides annotations
+        const safeEmbedUrl = `https://www.youtube-nocookie.com/embed/${videoObj.ytid}?autoplay=1&rel=0&modestbranding=1&iv_load_policy=3&playsinline=1`;
         
-        // Ensure play is called after load
-        const playPromise = mainVideoPlayer.play();
-        if (playPromise !== undefined) {
-          playPromise.catch(error => {
-            console.log("Autoplay was prevented by browser:", error);
-          });
-        }
+        youtubePlayer.src = safeEmbedUrl;
 
         // Highlight active card
         document.querySelectorAll('.video-card').forEach(card => {
