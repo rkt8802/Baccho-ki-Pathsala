@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Baccho-ki-Pathsala 🎒 | By Ranjeet Thakur</title>
+  
+  <style>
+    /* ==========================================================================
+       THEME & COLOR PALETTE
+       ========================================================================== */
+    :root {
+      --primary: #FF4757;      /* Bright Coral Red */
+      --secondary: #1E90FF;    /* Dodger Blue */
+      --accent: #FFA502;       /* Bright Orange/Yellow */
+      --bg-color: #F1F2F6;     /* Soft Gray/White Background */
+      --card-bg: #FFFFFF;
+      --text-dark: #2F3542;
+      --font-family: 'Fredoka One', 'Chalkboard SE', 'Comic Sans MS', sans-serif;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+
+    html, body {
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden; /* Prevent full-page browser scrolling */
+      background-color: var(--bg-color);
+      font-family: var(--font-family);
+      color: var(--text-dark);
+    }
+
+    /* ==========================================================================
+       START SCREEN OVERLAY (Forces Fullscreen & Interaction)
+       ========================================================================== */
+    #start-overlay {
+      position: fixed;
+      inset: 0;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 99999;
+      text-align: center;
+      padding: 20px;
+      transition: opacity 0.4s ease, visibility 0.4s ease;
+    }
+
+    #start-overlay.hidden {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .overlay-mascot {
+      font-size: 6rem;
+      margin-bottom: 15px;
+      filter: drop-shadow(0 10px 15px rgba(0,0,0,0.3));
+      animation: float 2.5s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-15px); }
+    }
+
+    .overlay-title {
+      color: #FFFFFF;
+      font-size: 3rem;
+      letter-spacing: 2px;
+      text-shadow: 0 4px 10px rgba(0,0,0,0.3);
+      margin-bottom: 10px;
+    }
+
+    .start-btn {
+      background-color: var(--accent);
+      color: #FFFFFF;
+      font-family: var(--font-family);
+      font-size: 1.8rem;
+      font-weight: 900;
+      padding: 15px 50px;
+      border-radius: 50px;
+      border: 5px solid #FFFFFF;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+      cursor: pointer;
+      margin-top: 20px;
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+
+    .dev-badge {
+      margin-top: 30px;
+      background: rgba(255, 255, 255, 0.25);
+      padding: 10px 25px;
+      border-radius: 30px;
+      color: #FFFFFF;
+      font-size: 1.1rem;
+      backdrop-filter: blur(5px);
+      border: 1px solid rgba(255,255,255,0.4);
+    }
+
+    /* ==========================================================================
+       APP SHELL & LAYOUT
+       ========================================================================== */
+    #app-container {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      width: 100vw;
+    }
+
+    /* Top Header */
+    header {
+      height: 60px;
+      background: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 20px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+      color: white;
+      flex-shrink: 0;
+    }
+
+    .app-brand {
+      font-size: 1.5rem;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .header-dev-tag {
+      background: var(--accent);
+      padding: 5px 15px;
+      border-radius: 20px;
+      font-size: 0.9rem;
+      color: #333;
+      font-weight: bold;
+    }
+
+    /* Main Body Layout */
+    .app-body {
+      display: flex;
+      flex: 1;
+      height: calc(100vh - 60px);
+      overflow: hidden;
+    }
+
+    /* Left Sidebar */
+    aside.sidebar {
+      width: 250px;
+      background: #FFFFFF;
+      border-right: 2px solid #DFE4EA;
+      padding: 15px 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      flex-shrink: 0;
+    }
+
+    .nav-btn {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: var(--bg-color);
+      border: 2px solid transparent;
+      border-radius: 12px;
+      padding: 12px 15px;
+      font-size: 1.1rem;
+      font-family: var(--font-family);
+      font-weight: bold;
+      color: var(--text-dark);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .nav-btn.active {
+      background: var(--secondary);
+      color: white;
+      border-color: #192A56;
+      box-shadow: 0 4px 10px rgba(30, 144, 255, 0.4);
+    }
+
+    /* Main Content Area */
+    main.content-area {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      padding: 15px;
+      gap: 15px;
+    }
+
+    /* ==========================================================================
+       LARGE YOUTUBE PLAYER THEATRE
+       ========================================================================== */
+    .theatre-wrapper {
+      width: 100%;
+      height: 55vh; /* Takes up 55% of the screen height */
+      min-height: 250px;
+      background: #000000;
+      border-radius: 15px;
+      border: 4px solid var(--text-dark);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+
+    .video-container {
+      flex: 1;
+      position: relative;
+      background: #111;
+      width: 100%;
+    }
+
+    /* YouTube iframe styling */
+    iframe#youtube-player {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    .now-playing-bar {
+      height: 45px;
+      background: #FFFFFF;
+      display: flex;
+      align-items: center;
+      padding: 0 15px;
+      gap: 10px;
+      font-weight: bold;
+      font-size: 1.1rem;
+      border-top: 2px solid #DFE4EA;
+    }
+
+    .badge {
+      background: var(--primary);
+      color: white;
+      padding: 4px 10px;
+      border-radius: 8px;
+      font-size: 0.8rem;
+    }
+
+    /* ==========================================================================
+       COMPACT SMALL THUMBNAIL GRID
+       ========================================================================== */
+    .grid-container {
+      flex: 1;
+      overflow-y: auto; /* Allow scrolling only in the grid area */
+      background: #FFFFFF;
+      border-radius: 15px;
+      padding: 15px;
+      border: 2px solid #DFE4EA;
+    }
+
+    .grid-title {
+      font-size: 1.3rem;
+      margin-bottom: 15px;
+      padding-bottom: 10px;
+      border-bottom: 2px dashed #CED6E0;
+      color: var(--secondary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .video-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 10px;
+    }
+
+    /* Small, horizontal compact cards */
+    .video-card {
+      background: var(--bg-color);
+      border: 2px solid #CED6E0;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      padding: 8px;
+      gap: 10px;
+      cursor: pointer;
+      transition: transform 0.2s, border-color 0.2s;
+    }
+
+    .video-card:hover {
+      transform: translateY(-2px);
+      border-color: var(--secondary);
+    }
+
+    .video-card.active {
+      border-color: var(--primary);
+      background: #FFF5F5;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+
+    .card-icon {
+      font-size: 1.8rem;
+      background: #FFFFFF;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      flex-shrink: 0;
+    }
+
+    .card-title {
+      font-size: 0.85rem;
+      font-weight: bold;
+      line-height: 1.2;
+      overflow: hidden;
+      display: -webkit-box;
+      -webkit-line-clamp: 2; /* Limit to 2 lines */
+      -webkit-box-orient: vertical;
+    }
+
+    /* ==========================================================================
+       MOBILE RESPONSIVENESS
+       ========================================================================== */
+    @media (max-width: 768px) {
+      .app-body {
+        flex-direction: column;
+      }
+
+      /* Sidebar becomes a horizontal swipeable bar on top */
+      aside.sidebar {
+        width: 100%;
+        flex-direction: row;
+        overflow-x: auto;
+        padding: 10px;
+        border-right: none;
+        border-bottom: 2px solid #DFE4EA;
+        height: 65px;
+      }
+
+      .nav-btn {
+        padding: 8px 12px;
+        font-size: 0.9rem;
+        border-radius: 20px;
+        white-space: nowrap;
+      }
+
+      main.content-area {
+        padding: 10px;
+        gap: 10px;
+      }
+
+      /* Adjust Theatre height for mobile screens */
+      .theatre-wrapper {
+        height: 38vh; 
+      }
+
+      /* Smaller grid cards for mobile */
+      .video-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+      }
+
+      .card-icon {
+        width: 32px;
+        height: 32px;
+        font-size: 1.4rem;
+      }
+
+      .card-title {
+        font-size: 0.78rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- FULLSCREEN GATEWAY -->
+  <div id="start-overlay">
+    <div class="overlay-mascot">🎒🦁</div>
+    <h1 class="overlay-title">Baccho-ki-Pathsala</h1>
+    <p style="color: white; font-weight: bold; margin-bottom: 15px;">Safe YouTube Kid's Player</p>
+    <button class="start-btn" id="start-btn">▶ Tap to Start Play!</button>
+    <div class="dev-badge">👨‍💻 Developed by <strong>Ranjeet Thakur</strong></div>
+  </div>
+
+  <!-- APP SHELL -->
+  <div id="app-container">
+    <header>
+      <div class="app-brand">🎒 Baccho-ki-Pathsala</div>
+      <div class="header-dev-tag">⭐ By Ranjeet Thakur</div>
+    </header>
+
+    <div class="app-body">
+      <!-- Sidebar Categories -->
+      <aside class="sidebar" id="sidebar-nav">
+        <!-- Buttons rendered by JS -->
+      </aside>
+
+      <!-- Main Content -->
+      <main class="content-area" id="main-scroll-area">
+        
+        <!-- LARGE VIDEO PLAYER AREA -->
+        <div class="theatre-wrapper">
+          <div class="video-container">
+            <!-- SAFE YOUTUBE EMBED IFRAME -->
+            <iframe 
+              id="youtube-player" 
+              src="" 
+              title="Kids Safe Video Player"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+              allowfullscreen>
+            </iframe>
+          </div>
+          <div class="now-playing-bar">
+            <span class="badge">PLAYING</span>
+            <span id="now-playing-text">Select a video to play</span>
+          </div>
+        </div>
+
+        <!-- COMPACT BOTTOM GRID -->
+        <div class="grid-container">
+          <div class="grid-title" id="grid-title">🎵 Rhymes & Songs</div>
+          <div class="video-grid" id="video-grid">
+            <!-- Thumbnail Cards rendered by JS -->
+          </div>
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      'use strict';
+
+      // ======================================================================
+      // DATABASE: 50 REAL YOUTUBE KIDS VIDEOS
+      // ======================================================================
+      const categoriesData = {
+        rhymes: {
+          name: "Rhymes & Songs",
+          emoji: "🎵",
+          videos: [
+            { id: "rh1", title: "Twinkle Twinkle Little Star", emoji: "⭐", ytid: "yCjJyiqpAuU" },
+            { id: "rh2", title: "Wheels on the Bus Go Round", emoji: "🚌", ytid: "e_04ZrNroTo" },
+            { id: "rh3", title: "Johny Johny Yes Papa", emoji: "👶", ytid: "F4tHL8reNCs" },
+            { id: "rh4", title: "लकड़ी की काठी (Lakdi Ki Kathi)", emoji: "🐴", ytid: "tSjQ8qZ_y_4" },
+            { id: "rh5", title: "Old MacDonald Had A Farm", emoji: "🚜", ytid: "_6HzoUcx3eo" },
+            { id: "rh6", title: "मछली जल की रानी है", emoji: "🐟", ytid: "b3q5p3C1K3I" },
+            { id: "rh7", title: "Five Little Monkeys Jumping", emoji: "🐒", ytid: "b0NHrFNZWh0" },
+            { id: "rh8", title: "तितली उड़ी बस पर चढ़ी", emoji: "🦋", ytid: "N9P2_4dKx4g" },
+            { id: "rh9", title: "Baby Shark Dance", emoji: "🦈", ytid: "XqZsoesa55w" },
+            { id: "rh10", title: "चंदा मामा दूर के", emoji: "🌙", ytid: "kP0b1Z0y4q0" }
+          ]
+        },
+        english_stories: {
+          name: "English Stories",
+          emoji: "📖",
+          videos: [
+            { id: "es1", title: "The Thirsty Crow", emoji: "🦅", ytid: "b3g-L3gJv5A" },
+            { id: "es2", title: "The Lion and the Mouse", emoji: "🦁", ytid: "Gzc8u88yQz8" },
+            { id: "es3", title: "The Tortoise and the Hare", emoji: "🐢", ytid: "mehy7Zl28_w" },
+            { id: "es4", title: "The Boy Who Cried Wolf", emoji: "🐺", ytid: "9Y8u0Q_w6q0" },
+            { id: "es5", title: "The Greedy Dog", emoji: "🐶", ytid: "s9wWl6Z2s7A" },
+            { id: "es6", title: "The Ant and the Grasshopper", emoji: "🐜", ytid: "ripQ9JDeW1E" },
+            { id: "es7", title: "The Fox and the Sour Grapes", emoji: "🦊", ytid: "r1oO-aNkV7E" },
+            { id: "es8", title: "The Three Little Pigs", emoji: "🐷", ytid: "1X6c9eA7w8A" },
+            { id: "es9", title: "The Honest Woodcutter", emoji: "🪓", ytid: "4N4z23Uf_cE" },
+            { id: "es10", title: "King Midas Golden Touch", emoji: "👑", ytid: "a2Z3uU4i1zM" }
+          ]
+        },
+        hindi_stories: {
+          name: "Hindi Kahaniyan",
+          emoji: "📚",
+          videos: [
+            { id: "hs1", title: "प्यासा कौवा (Thirsty Crow)", emoji: "🦅", ytid: "u4e5rO0c9dM" },
+            { id: "hs2", title: "शेर और चूहा (Lion & Mouse)", emoji: "🦁", ytid: "mGZ3L7s8E_w" },
+            { id: "hs3", title: "कछुआ और खरगोश", emoji: "🐢", ytid: "q5x5kY3mY2g" },
+            { id: "hs4", title: "लालची कुत्ता (Greedy Dog)", emoji: "🐕", ytid: "1pB6gW8wHwE" },
+            { id: "hs5", title: "बंदर और मगरमच्छ", emoji: "🐒", ytid: "7u6h6L5p5g4" },
+            { id: "hs6", title: "लोमड़ी और खट्टे अंगूर", emoji: "🍇", ytid: "k4kY8uX8v7E" },
+            { id: "hs7", title: "ईमानदार लकड़हारा", emoji: "🪓", ytid: "8r7y6t5u4i3" },
+            { id: "hs8", title: "भेड़िया आया! (Boy Who Cried Wolf)", emoji: "🐺", ytid: "5w4e3r2t1y0" },
+            { id: "hs9", title: "दो बिल्लियां और बंदर", emoji: "🐱", ytid: "9m8n7b6v5c4" },
+            { id: "hs10", title: "हाथी और दर्जी की कहानी", emoji: "🐘", ytid: "3x2z1a4s5d6" }
+          ]
+        },
+        alphabets: {
+          name: "Alphabet & Phonics",
+          emoji: "🅰️",
+          videos: [
+            { id: "al1", title: "ABC Phonics Song A to Z", emoji: "🔤", ytid: "BELlZKpi1Zs" },
+            { id: "al2", title: "हिंदी वर्णमाला अ से ज्ञ", emoji: "🇮🇳", ytid: "r1wN1K9P4Xo" },
+            { id: "al3", title: "Learn Letter Sounds & Words", emoji: "🍎", ytid: "ffeZXPtXqz4" },
+            { id: "al4", title: "क से कबूतर, ख से खरगोश", emoji: "🕊️", ytid: "a2Z4b8N1m6E" },
+            { id: "al5", title: "ABC Animal Phonics", emoji: "🦁", ytid: "wp4iK6V8U9Q" },
+            { id: "al6", title: "Magic Vowels A E I O U", emoji: "🪄", ytid: "fR-BLFZyull" },
+            { id: "al7", title: "हिंदी स्वर गीत (अ, आ, इ, ई)", emoji: "🎶", ytid: "d8E7w2Q1a9Z" },
+            { id: "al8", title: "Phonics Dance", emoji: "💃", ytid: "saF3-f0X450" },
+            { id: "al9", title: "Learn Writing Alphabet", emoji: "✏️", ytid: "36IBDpTRVNE" },
+            { id: "al10", title: "Alphabet Train Song", emoji: "🚂", ytid: "75p-N9YKqNo" }
+          ]
+        },
+        numbers: {
+          name: "Numbers & Counting",
+          emoji: "🔢",
+          videos: [
+            { id: "nu1", title: "Numbers Song 1 to 20", emoji: "🔟", ytid: "D0Ajq682yrA" },
+            { id: "nu2", title: "गिनती सीखें 1 से 10 तक", emoji: "🇮🇳", ytid: "e4U7t2Q9w8A" },
+            { id: "nu3", title: "Count to 100 with Super Fun", emoji: "💯", ytid: "0TgLtF3PMOc" },
+            { id: "nu4", title: "1 से 20 तक गिनती", emoji: "🎈", ytid: "q8W7e6R5t4Y" },
+            { id: "nu5", title: "Shapes and Colors for Kids", emoji: "🔺", ytid: "WTeqUejf3D0" },
+            { id: "nu6", title: "1, 2, Buckle My Shoe", emoji: "👟", ytid: "gW_V6xN6t9Y" },
+            { id: "nu7", title: "Addition Fun for Little Kids", emoji: "➕", ytid: "mjlsSYLLZ-A" },
+            { id: "nu8", title: "Learn Counting Balloons", emoji: "🎈", ytid: "V_lgJgB8908" },
+            { id: "nu9", title: "5 Little Ducks", emoji: "🦆", ytid: "pZw9veQ76fo" },
+            { id: "nu10", title: "Number Train Fun", emoji: "🚂", ytid: "Yt8GFgxlITs" }
+          ]
+        }
+      };
+
+      // State Variables
+      let currentCategoryKey = 'rhymes';
+      let currentPlayingId = null;
+
+      // DOM Elements
+      const startOverlay = document.getElementById('start-overlay');
+      const startBtn = document.getElementById('start-btn');
+      const sidebarNav = document.getElementById('sidebar-nav');
+      const gridTitle = document.getElementById('grid-title');
+      const videoGrid = document.getElementById('video-grid');
+      const youtubePlayer = document.getElementById('youtube-player');
+      const nowPlayingText = document.getElementById('now-playing-text');
+      const mainScrollArea = document.getElementById('main-scroll-area');
+
+      // 1. Start App & Request Fullscreen
+      startBtn.addEventListener('click', () => {
+        const doc = document.documentElement;
+        if (doc.requestFullscreen) doc.requestFullscreen().catch(()=>{});
+        
+        startOverlay.classList.add('hidden');
+        
+        // Auto-play the first video on entry
+        playVideo(categoriesData[currentCategoryKey].videos[0]);
+      });
+
+      // 2. Safest Possible YouTube Embed Engine
+      function playVideo(videoObj) {
+        if (!videoObj) return;
+        currentPlayingId = videoObj.id;
+
+        // Update Text
+        nowPlayingText.textContent = `${videoObj.emoji} ${videoObj.title}`;
+        
+        // Construct strict, distraction-free YouTube No-Cookie URL
+        // autoplay=1 : Start immediately
+        // rel=0 : Only show related videos from the SAME channel at the end
+        // modestbranding=1 : Remove YouTube logo
+        // iv_load_policy=3 : Hide annotations/cards
+        const safeEmbedUrl = `https://www.youtube-nocookie.com/embed/${videoObj.ytid}?autoplay=1&rel=0&modestbranding=1&iv_load_policy=3&fs=1&playsinline=1`;
+        
+        youtubePlayer.src = safeEmbedUrl;
+
+        // Highlight active card
+        document.querySelectorAll('.video-card').forEach(card => {
+          if(card.dataset.id === videoObj.id) {
+            card.classList.add('active');
+          } else {
+            card.classList.remove('active');
+          }
+        });
+      }
+
+      // 3. Render Sidebar Navigation
+      function renderNavigation() {
+        sidebarNav.innerHTML = '';
+        Object.keys(categoriesData).forEach(key => {
+          const cat = categoriesData[key];
+          const btn = document.createElement('button');
+          btn.className = `nav-btn ${key === currentCategoryKey ? 'active' : ''}`;
+          btn.innerHTML = `<span>${cat.emoji}</span> <span>${cat.name}</span>`;
+          
+          btn.addEventListener('click', () => {
+            currentCategoryKey = key;
+            // Update Active styling
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            // Re-render Grid
+            renderVideoGrid();
+          });
+
+          sidebarNav.appendChild(btn);
+        });
+      }
+
+      // 4. Render Thumbnail Grid
+      function renderVideoGrid() {
+        const catData = categoriesData[currentCategoryKey];
+        gridTitle.innerHTML = `${catData.emoji} ${catData.name}`;
+        videoGrid.innerHTML = '';
+
+        catData.videos.forEach(video => {
+          const card = document.createElement('div');
+          card.className = `video-card ${video.id === currentPlayingId ? 'active' : ''}`;
+          card.dataset.id = video.id;
+          
+          card.innerHTML = `
+            <div class="card-icon">${video.emoji}</div>
+            <div class="card-title">${video.title}</div>
+          `;
+
+          card.addEventListener('click', () => {
+            playVideo(video);
+            // Smoothly scroll back up to the video player on mobile
+            if (window.innerWidth <= 768) {
+              mainScrollArea.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+          });
+
+          videoGrid.appendChild(card);
+        });
+      }
+
+      // Initialize App
+      renderNavigation();
+      renderVideoGrid();
+
+    })();
+  </script>
+</body>
+</html>
