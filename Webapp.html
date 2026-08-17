@@ -1,0 +1,949 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Baccho-ki-Pathsala 🎒 | By Ranjeet Thakur</title>
+  
+  <style>
+    /* ==========================================================================
+       CSS VARIABLES & THEME
+       ========================================================================== */
+    :root {
+      --primary: #FF5A5F;
+      --secondary: #00B4D8;
+      --accent: #FFD166;
+      --green: #06D6A0;
+      --purple: #8338EC;
+      --bg-color: #F4F9FD;
+      --text-dark: #1E293B;
+      --card-bg: #FFFFFF;
+      --font-family: 'Fredoka One', 'Chalkboard SE', 'Comic Sans MS', 'Bubblegum Sans', cursive, sans-serif;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    html, body {
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      background-color: var(--bg-color);
+      font-family: var(--font-family);
+      color: var(--text-dark);
+    }
+
+    /* ==========================================================================
+       FULLSCREEN OVERLAY GATE
+       ========================================================================== */
+    #start-overlay {
+      position: fixed;
+      inset: 0;
+      background: linear-gradient(135deg, #FF5A5F 0%, #8338EC 50%, #00B4D8 100%);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 99999;
+      text-align: center;
+      padding: 20px;
+      transition: opacity 0.4s ease, visibility 0.4s ease;
+    }
+
+    #start-overlay.hidden {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .overlay-mascot {
+      font-size: 5rem;
+      margin-bottom: 8px;
+      animation: float 2.5s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-12px); }
+    }
+
+    .overlay-title {
+      color: #FFFFFF;
+      font-size: 2.5rem;
+      letter-spacing: 1px;
+      text-shadow: 0 4px 10px rgba(0,0,0,0.3);
+      margin-bottom: 4px;
+    }
+
+    .overlay-subtitle {
+      color: var(--accent);
+      font-size: 1.2rem;
+      margin-bottom: 24px;
+      font-weight: bold;
+    }
+
+    .start-btn {
+      background-color: var(--accent);
+      color: #B91C1C;
+      font-family: var(--font-family);
+      font-size: 1.5rem;
+      font-weight: 900;
+      padding: 16px 42px;
+      border-radius: 50px;
+      border: 4px solid #FFFFFF;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      animation: bounce 1.8s infinite ease-in-out;
+      outline: none;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    .dev-badge-overlay {
+      margin-top: 24px;
+      background: rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(8px);
+      padding: 8px 20px;
+      border-radius: 30px;
+      color: #FFFFFF;
+      font-size: 0.95rem;
+      border: 1px solid rgba(255, 255, 255, 0.4);
+    }
+
+    /* ==========================================================================
+       MAIN APP SHELL
+       ========================================================================== */
+    #app-container {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      height: 100%;
+    }
+
+    header {
+      height: 60px;
+      background: linear-gradient(90deg, var(--primary), #FF758C);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 20px;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+      z-index: 20;
+      flex-shrink: 0;
+    }
+
+    .app-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #FFFFFF;
+      font-size: 1.4rem;
+      font-weight: 900;
+    }
+
+    .dev-tag {
+      background: linear-gradient(135deg, var(--accent), #FFAA00);
+      color: #78350F;
+      padding: 5px 14px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 900;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    }
+
+    .app-body {
+      display: flex;
+      flex: 1;
+      height: calc(100vh - 60px);
+      overflow: hidden;
+    }
+
+    /* Sidebar Navigation */
+    aside.sidebar {
+      width: 250px;
+      background-color: #FFFFFF;
+      border-right: 3px solid #E2E8F0;
+      padding: 14px 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      overflow-y: auto;
+      flex-shrink: 0;
+    }
+
+    .nav-label {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #94A3B8;
+      padding: 2px 10px;
+      font-weight: bold;
+    }
+
+    .nav-btn {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: #F8FAFC;
+      border: 2px solid transparent;
+      border-radius: 16px;
+      padding: 10px 14px;
+      font-family: var(--font-family);
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--text-dark);
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.2s ease;
+    }
+
+    .nav-btn .nav-emoji {
+      font-size: 1.3rem;
+    }
+
+    .nav-btn:hover {
+      background-color: #F0FDFA;
+      border-color: var(--secondary);
+    }
+
+    .nav-btn.active {
+      background: linear-gradient(135deg, var(--secondary), #0096C7);
+      color: #FFFFFF;
+      border-color: #023E8A;
+      box-shadow: 0 4px 10px rgba(0, 180, 216, 0.35);
+    }
+
+    .sidebar-footer {
+      margin-top: auto;
+      padding-top: 10px;
+      border-top: 2px dashed #E2E8F0;
+      text-align: center;
+      font-size: 0.78rem;
+      color: #64748B;
+    }
+
+    /* Main Scroll Area */
+    main.content-area {
+      flex: 1;
+      height: 100%;
+      overflow-y: auto;
+      padding: 14px 20px 40px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      scroll-behavior: smooth;
+    }
+
+    /* ==========================================================================
+       LARGE HERO VIDEO & ANIMATED THEATRE AREA
+       ========================================================================== */
+    .theatre-wrapper {
+      width: 100%;
+      max-width: 980px;
+      margin: 0 auto;
+      background: #0B132B;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.18);
+      border: 5px solid var(--accent);
+      flex-shrink: 0;
+    }
+
+    .theatre-screen {
+      position: relative;
+      width: 100%;
+      height: 48vh; /* Large Expanded Video Area */
+      min-height: 280px;
+      max-height: 480px;
+      background: #000000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    /* Stage Background Animation Effects */
+    .stage-backdrop {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at center, #1C2541 0%, #0B132B 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      text-align: center;
+    }
+
+    .animated-hero-icon {
+      font-size: 5.5rem;
+      margin-bottom: 8px;
+      animation: hero-wiggle 2s infinite ease-in-out;
+      filter: drop-shadow(0 8px 18px rgba(0,0,0,0.4));
+    }
+
+    @keyframes hero-wiggle {
+      0%, 100% { transform: translateY(0) scale(1); }
+      50% { transform: translateY(-14px) scale(1.1); }
+    }
+
+    .story-bubble {
+      background: rgba(255, 255, 255, 0.95);
+      color: #0F172A;
+      padding: 10px 20px;
+      border-radius: 20px;
+      font-size: 1.15rem;
+      font-weight: 800;
+      max-width: 85%;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+      border: 3px solid var(--secondary);
+      line-height: 1.35;
+    }
+
+    .stage-stars {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background-image: radial-gradient(2px 2px at 20px 30px, #eee, rgba(0,0,0,0)),
+                        radial-gradient(2px 2px at 80px 70px, #fff, rgba(0,0,0,0)),
+                        radial-gradient(3px 3px at 200px 150px, var(--accent), rgba(0,0,0,0)),
+                        radial-gradient(2px 2px at 300px 80px, #fff, rgba(0,0,0,0));
+      background-repeat: repeat;
+      background-size: 350px 350px;
+      opacity: 0.6;
+    }
+
+    /* HTML5 Direct Video Player Mode */
+    video#direct-video-player {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: none;
+    }
+
+    /* Theatre Bar */
+    .theatre-controls-bar {
+      background-color: #FFFFFF;
+      padding: 10px 16px;
+      border-top: 3px solid #E2E8F0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .now-playing-info {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      overflow: hidden;
+      flex: 1;
+    }
+
+    .now-playing-badge {
+      background-color: var(--primary);
+      color: white;
+      padding: 4px 10px;
+      border-radius: 10px;
+      font-size: 0.75rem;
+      font-weight: 900;
+      flex-shrink: 0;
+    }
+
+    .now-playing-title {
+      font-size: 1.05rem;
+      font-weight: bold;
+      color: var(--text-dark);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .theatre-btn-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .action-btn {
+      border: none;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-family: var(--font-family);
+      font-weight: 800;
+      font-size: 0.85rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-play-sound {
+      background: var(--green);
+      color: #064E3B;
+    }
+
+    .btn-switch-video {
+      background: var(--purple);
+      color: #FFFFFF;
+    }
+
+    /* ==========================================================================
+       COMPACT & SMALL VIDEO CARDS GRID
+       ========================================================================== */
+    .grid-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 2px dashed #CBD5E1;
+      padding-bottom: 6px;
+    }
+
+    .grid-title {
+      font-size: 1.3rem;
+      color: var(--text-dark);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .count-tag {
+      background: #E0F2FE;
+      color: #0369A1;
+      font-size: 0.8rem;
+      font-weight: bold;
+      padding: 2px 10px;
+      border-radius: 12px;
+    }
+
+    /* Small, Space-saving Grid */
+    .video-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .video-card {
+      background-color: var(--card-bg);
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.06);
+      border: 2px solid #E2E8F0;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      padding: 8px 10px;
+      gap: 10px;
+      transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+
+    .video-card:hover {
+      transform: translateY(-3px);
+      border-color: var(--secondary);
+      box-shadow: 0 6px 14px rgba(0, 180, 216, 0.25);
+    }
+
+    .video-card.active-playing {
+      border-color: var(--primary);
+      background-color: #FFF5F5;
+      box-shadow: 0 0 0 2px var(--accent);
+    }
+
+    /* Small Icon Badge */
+    .card-small-icon {
+      width: 44px;
+      height: 44px;
+      min-width: 44px;
+      background: linear-gradient(135deg, #FFEAA7, #FFD3B6);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.6rem;
+      position: relative;
+    }
+
+    .card-lang-dot {
+      position: absolute;
+      top: -4px;
+      left: -4px;
+      background: #0F172A;
+      color: #FFF;
+      font-size: 0.6rem;
+      font-weight: 900;
+      padding: 1px 4px;
+      border-radius: 6px;
+    }
+
+    .card-info {
+      flex: 1;
+      overflow: hidden;
+    }
+
+    .card-title {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--text-dark);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      line-height: 1.2;
+    }
+
+    .card-action-text {
+      font-size: 0.72rem;
+      color: var(--secondary);
+      font-weight: bold;
+    }
+
+    /* ==========================================================================
+       MOBILE RESPONSIVENESS
+       ========================================================================== */
+    @media (max-width: 768px) {
+      header {
+        height: 52px;
+        padding: 0 12px;
+      }
+      .app-brand { font-size: 1.15rem; }
+      .dev-tag { font-size: 0.75rem; padding: 4px 8px; }
+      
+      .app-body {
+        flex-direction: column;
+        height: calc(100vh - 52px);
+      }
+
+      aside.sidebar {
+        width: 100%;
+        height: auto;
+        border-right: none;
+        border-bottom: 2px solid #E2E8F0;
+        padding: 6px 10px;
+        flex-direction: row;
+        gap: 6px;
+        overflow-x: auto;
+        overflow-y: hidden;
+        white-space: nowrap;
+      }
+
+      .nav-label, .sidebar-footer { display: none; }
+      .nav-btn { padding: 6px 12px; font-size: 0.85rem; border-radius: 20px; }
+      .nav-btn .nav-emoji { font-size: 1.1rem; }
+
+      main.content-area { padding: 10px 10px 30px 10px; gap: 10px; }
+      .theatre-wrapper { border-width: 3px; border-radius: 14px; }
+      .theatre-screen { height: 36vh; min-height: 200px; }
+      .animated-hero-icon { font-size: 3.8rem; }
+      .story-bubble { font-size: 0.92rem; padding: 6px 12px; }
+
+      .video-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+      }
+      .card-small-icon { width: 38px; height: 38px; min-width: 38px; font-size: 1.3rem; }
+      .card-title { font-size: 0.78rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- TAP TO START OVERLAY -->
+  <div id="start-overlay">
+    <div class="overlay-mascot">🎒🦁✨</div>
+    <h1 class="overlay-title">Baccho-ki-Pathsala</h1>
+    <p class="overlay-subtitle">Kids Learning, Stories & Rhymes Hub</p>
+    
+    <button class="start-btn" id="start-app-btn">
+      <span>🚀 Tap to Play!</span>
+    </button>
+
+    <div class="dev-badge-overlay">
+      👨‍💻 Developed by <strong>Ranjeet Thakur</strong>
+    </div>
+  </div>
+
+  <!-- APP SHELL -->
+  <div id="app-container">
+    
+    <!-- Header -->
+    <header>
+      <div class="app-brand">
+        <span>🎒</span>
+        <span>Baccho-ki-Pathsala</span>
+      </div>
+      <div class="dev-tag">
+        ⭐ By Ranjeet Thakur
+      </div>
+    </header>
+
+    <div class="app-body">
+      
+      <!-- Category Nav -->
+      <aside class="sidebar" id="sidebar-nav">
+        <span class="nav-label">Categories</span>
+        <!-- Dynamic Nav -->
+        <div class="sidebar-footer">
+          <p><strong>Baccho-ki-Pathsala</strong></p>
+          <p>Created by</p>
+          <p><strong>Ranjeet Thakur</strong></p>
+        </div>
+      </aside>
+
+      <!-- Main Video Content Area -->
+      <main class="content-area" id="content-scroll-area">
+        
+        <!-- Large Video Player & Live Animated Stage -->
+        <section class="theatre-wrapper">
+          <div class="theatre-screen">
+            
+            <!-- Live Kid Animated Cartoon Stage -->
+            <div class="stage-backdrop" id="stage-backdrop">
+              <div class="stage-stars"></div>
+              <div class="animated-hero-icon" id="stage-icon">🐟</div>
+              <div class="story-bubble" id="stage-text">मछली जल की रानी है, जीवन उसका पानी है!</div>
+            </div>
+
+            <!-- Direct Video Mode -->
+            <video 
+              id="direct-video-player" 
+              controls 
+              playsinline
+              controlslist="nodownload noremoteplayback">
+              <source id="direct-video-source" src="" type="video/mp4">
+            </video>
+
+          </div>
+
+          <!-- Controls Bar -->
+          <div class="theatre-controls-bar">
+            <div class="now-playing-info">
+              <span class="now-playing-badge">NOW PLAYING</span>
+              <span class="now-playing-title" id="now-playing-text">मछली जल की रानी है</span>
+            </div>
+            <div class="theatre-btn-group">
+              <button class="action-btn btn-play-sound" id="btn-replay-voice">
+                <span>🔊 Voice</span>
+              </button>
+              <button class="action-btn btn-switch-video" id="btn-toggle-video">
+                <span>🎬 Video Mode</span>
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <!-- Small Title Icons Grid -->
+        <section>
+          <div class="grid-header">
+            <h2 class="grid-title" id="active-category-title">🎵 Rhymes & Songs</h2>
+            <span class="count-tag" id="lesson-count-tag">10 Lessons</span>
+          </div>
+          <div class="video-grid" id="video-cards-grid">
+            <!-- Small Compact Cards rendered here -->
+          </div>
+        </section>
+
+      </main>
+
+    </div>
+  </div>
+
+  <!-- JAVASCRIPT LOGIC -->
+  <script>
+    (function () {
+      'use strict';
+
+      // Safe Direct MP4 Streams (Fast, CORS open)
+      const directVideoPool = [
+        "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
+        "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+        "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
+        "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4",
+        "https://www.w3schools.com/html/mov_bbb.mp4"
+      ];
+
+      // 50 Educational Lessons
+      const videoData = {
+        rhymes: {
+          name: "Rhymes & Songs",
+          emoji: "🎵",
+          videos: [
+            { id: "rh1", title: "मछली जल की रानी है", emoji: "🐟", lang: "HI", text: "मछली जल की रानी है, जीवन उसका पानी है! हाथ लगाओ तो डर जाएगी, बाहर निकालो तो मर जाएगी!", vIdx: 0 },
+            { id: "rh2", title: "लकड़ी की काठी, काठी पे घोड़ा", emoji: "🐴", lang: "HI", text: "लकड़ी की काठी, काठी पे घोड़ा, घोड़े की दुम पे जो मारा हथौड़ा, दौड़ा दौड़ा दौड़ा घोड़ा दुम उठा के दौड़ा!", vIdx: 1 },
+            { id: "rh3", title: "Twinkle Twinkle Little Star", emoji: "⭐", lang: "EN", text: "Twinkle, twinkle, little star, How I wonder what you are! Up above the world so high, Like a diamond in the sky!", vIdx: 2 },
+            { id: "rh4", title: "Wheels on the Bus Go Round", emoji: "🚌", lang: "EN", text: "The wheels on the bus go round and round, round and round, all through the town!", vIdx: 3 },
+            { id: "rh5", title: "तितली उड़ी बस पर चढ़ी", emoji: "🦋", lang: "HI", text: "तितली उड़ी बस पर चढ़ी, सीट ना मिली तो रोने लगी, ड्राइवर ने बोला आजा मेरे पास, तितली बोली ना बाबा ना!", vIdx: 4 },
+            { id: "rh6", title: "Johny Johny Yes Papa", emoji: "👶", lang: "EN", text: "Johny Johny? Yes Papa! Eating sugar? No Papa! Telling lies? No Papa! Open your mouth, Ha! Ha! Ha!", vIdx: 0 },
+            { id: "rh7", title: "चंदा मामा दूर के", emoji: "🌙", lang: "HI", text: "चंदा मामा दूर के, पुए पकाएं बूर के! आप खाएं थाली में, मुन्ने को दें प्याली में!", vIdx: 1 },
+            { id: "rh8", title: "Five Little Monkeys Jumping", emoji: "🐒", lang: "EN", text: "Five little monkeys jumping on the bed, One fell off and bumped his head! Mama called the doctor and the doctor said no more monkeys!", vIdx: 2 },
+            { id: "rh9", title: "हाथी राजा बहुत बड़े", emoji: "🐘", lang: "HI", text: "हाथी राजा बहुत बड़े, सूंड उठाकर कहां चले? मेरे घर भी आओ ना, हलवा पूड़ी खाओ ना!", vIdx: 3 },
+            { id: "rh10", title: "Old MacDonald Had A Farm", emoji: "🚜", lang: "EN", text: "Old MacDonald had a farm, E-I-E-I-O! And on that farm he had some cows, E-I-E-I-O!", vIdx: 4 }
+          ]
+        },
+        english_stories: {
+          name: "English Stories",
+          emoji: "📖",
+          videos: [
+            { id: "es1", title: "The Thirsty Crow", emoji: "🦅", lang: "EN", text: "A clever crow dropped pebbles into a pitcher one by one until the water rose and he could drink happily!", vIdx: 0 },
+            { id: "es2", title: "The Lion & The Mouse", emoji: "🦁", lang: "EN", text: "A tiny mouse freed a mighty lion from a hunter's net. No act of kindness is ever wasted!", vIdx: 1 },
+            { id: "es3", title: "The Tortoise & The Hare", emoji: "🐢", lang: "EN", text: "Slow and steady wins the race! The patient tortoise won against the speedy boastful rabbit.", vIdx: 2 },
+            { id: "es4", title: "The Boy Who Cried Wolf", emoji: "🐺", lang: "EN", text: "Always tell the truth! Nobody believes a liar even when he is telling the truth.", vIdx: 3 },
+            { id: "es5", title: "The Greedy Dog & Bone", emoji: "🐶", lang: "EN", text: "A dog saw his own reflection in the water and barked, losing his juicy bone. Never be greedy!", vIdx: 4 },
+            { id: "es6", title: "The Ant & Grasshopper", emoji: "🐜", lang: "EN", text: "The hardworking ant stored food all summer while the grasshopper sang. Work hard today for tomorrow!", vIdx: 0 },
+            { id: "es7", title: "The Fox & Sour Grapes", emoji: "🦊", lang: "EN", text: "The fox tried and tried to reach the grapes. When he could not, he said they were sour!", vIdx: 1 },
+            { id: "es8", title: "The Three Little Pigs", emoji: "🐷", lang: "EN", text: "The smart little pig built a strong house of bricks that the big bad wolf could never blow down!", vIdx: 2 },
+            { id: "es9", title: "The Honest Woodcutter", emoji: "🪓", lang: "EN", text: "The honest woodcutter chose his simple iron axe and the river fairy rewarded him with gold!", vIdx: 3 },
+            { id: "es10", title: "The Touch of King Midas", emoji: "👑", lang: "EN", text: "King Midas learned that love, food, and family are worth far more than all the gold in the world!", vIdx: 4 }
+          ]
+        },
+        hindi_stories: {
+          name: "Hindi Kahaniyan",
+          emoji: "📚",
+          videos: [
+            { id: "hs1", title: "प्यासा कौवा (The Crow)", emoji: "🦅", lang: "HI", text: "एक प्यासा कौवा घड़े में कंकड़ डालकर पानी ऊपर लाया और अपनी प्यास बुझाई। जहां चाह, वहां राह!", vIdx: 0 },
+            { id: "hs2", title: "शेर और चूहा (Lion & Mouse)", emoji: "🦁", lang: "HI", text: "छोटे से चूहे ने जाल काटकर जंगल के राजा शेर की जान बचाई। हर छोटे जीव का महत्व होता है!", vIdx: 1 },
+            { id: "hs3", title: "कछुआ और खरगोश", emoji: "🐢", lang: "HI", text: "लगातार और धीरे-धीरे चलने वाला कछुआ घमंडी खरगोश से दौड़ जीत गया। कभी घमंड नहीं करना चाहिए!", vIdx: 2 },
+            { id: "hs4", title: "लालची कुत्ता (Greedy Dog)", emoji: "🐕", lang: "HI", text: "पानी में अपनी परछाई देखकर लालची कुत्ते ने भौंका और अपनी रोटी भी खो दी। लालच बुरी बला है!", vIdx: 3 },
+            { id: "hs5", title: "बंदर और मगरमच्छ", emoji: "🐒", lang: "HI", text: "होशियार बंदर ने अपनी सूझबूझ से चालाक मगरमच्छ से अपनी जान बचाई। संकट में दिमाग से काम लें!", vIdx: 4 },
+            { id: "hs6", title: "लोमड़ी और खट्टे अंगूर", emoji: "🍇", lang: "HI", text: "ऊंचे लटके अंगूर जब लोमड़ी को नहीं मिले, तो उसने कहा कि अंगूर खट्टे हैं!", vIdx: 0 },
+            { id: "hs7", title: "ईमानदार लकड़हारा", emoji: "🪓", lang: "HI", text: "ईमानदार लकड़हारे ने अपनी लोहे की कुल्हाड़ी चुनी और जलपरी ने उसे सोने की कुल्हाड़ी उपहार में दी!", vIdx: 1 },
+            { id: "hs8", title: "भेड़िया आया! झूठ की सजा", emoji: "🐺", lang: "HI", text: "चरवाहे ने बार-बार झूठ बोला। जब सच में भेड़िया आया तो किसी ने उसकी मदद नहीं की!", vIdx: 2 },
+            { id: "hs9", title: "दो बिल्लियां और बंदर", emoji: "🐱", lang: "HI", text: "दो बिल्लियां रोटी के लिए लड़ रही थीं और चालाक बंदर सारी रोटी खा गया। आपस में मिलकर रहना चाहिए!", vIdx: 3 },
+            { id: "hs10", title: "हाथी और दर्जी की सीख", emoji: "🐘", lang: "HI", text: "दर्जी ने हाथी को सुई चुभाई, तो हाथी ने कीचड़ लाकर दुकान पर डाल दिया। जैसा करोगे वैसा भरोगे!", vIdx: 4 }
+          ]
+        },
+        alphabets: {
+          name: "Alphabet & Phonics",
+          emoji: "🅰️",
+          videos: [
+            { id: "al1", title: "ABC Phonics Song", emoji: "🔤", lang: "EN", text: "A is for Apple 🍎, B is for Ball ⚽, C is for Cat 🐱, D is for Dog 🐶!", vIdx: 0 },
+            { id: "al2", title: "हिंदी वर्णमाला (अ से ज्ञ)", emoji: "🇮🇳", lang: "HI", text: "अ से अनार, आ से आम, इ से इमली, ई से ईख! सुंदर हिंदी अक्षर सीखें!", vIdx: 1 },
+            { id: "al3", title: "Letter Sounds Phonics", emoji: "🍎", lang: "EN", text: "Every letter makes a sound! Learn how letters blend together to make words!", vIdx: 2 },
+            { id: "al4", title: "क से कबूतर, ख से खरगोश", emoji: "🕊️", lang: "HI", text: "क से कबूतर, ख से खरगोश, ग से गमला, घ से घड़ी! आओ सीखें क ख ग!", vIdx: 3 },
+            { id: "al5", title: "ABC Animals Safari", emoji: "🦁", lang: "EN", text: "Meet animal friends from A to Z in the animal phonics safari adventure!", vIdx: 4 },
+            { id: "al6", title: "Magic Vowels A E I O U", emoji: "🪄", lang: "EN", text: "Five magic vowels: A, E, I, O, U! They make every single word complete!", vIdx: 0 },
+            { id: "al7", title: "हिंदी स्वर ज्ञान (अ, आ)", emoji: "🎶", lang: "HI", text: "अ आ इ ई उ ऊ ऋ ए ऐ ओ औ अं अः! हिंदी स्वर ज्ञान का सुंदर गीत!", vIdx: 1 },
+            { id: "al8", title: "Phonics Letter Tracing", emoji: "💃", lang: "EN", text: "Get up and dance while learning the shapes and sounds of all 26 letters!", vIdx: 2 },
+            { id: "al9", title: "Write Alphabet A to Z", emoji: "✏️", lang: "EN", text: "Learn writing capital and small letters step-by-step with rainbow colors!", vIdx: 3 },
+            { id: "al10", title: "Alphabet Express Train", emoji: "🚂", lang: "EN", text: "Choo choo! Hop aboard the alphabet train and travel through phonics land!", vIdx: 4 }
+          ]
+        },
+        numbers: {
+          name: "Numbers & Counting",
+          emoji: "🔢",
+          videos: [
+            { id: "nu1", title: "Counting Numbers 1-10", emoji: "🔟", lang: "EN", text: "1, 2, 3, 4, 5, 6, 7, 8, 9, 10! Let's count our ten happy fingers!", vIdx: 0 },
+            { id: "nu2", title: "गिनती सीखें 1 से 10", emoji: "🇮🇳", lang: "HI", text: "एक, दो, तीन, चार, पांच, छह, सात, आठ, नौ, दस! मिलकर बोलो गिनती सीखो!", vIdx: 1 },
+            { id: "nu3", title: "Count to 100 with Fun", emoji: "💯", lang: "EN", text: "Count all the way from 1 to 100 with cheerful beats and balloons!", vIdx: 2 },
+            { id: "nu4", title: "Shapes: Circle & Square", emoji: "🔺", lang: "EN", text: "Circle is round, Square has 4 equal sides, and Triangle has 3 corners!", vIdx: 3 },
+            { id: "nu5", title: "1, 2, Buckle My Shoe", emoji: "👟", lang: "EN", text: "1, 2, Buckle my shoe; 3, 4, Knock at the door; 5, 6, Pick up sticks!", vIdx: 4 },
+            { id: "nu6", title: "गिनती 11 से 20 हिंदी में", emoji: "🎈", lang: "HI", text: "ग्यारह, बारह, तेरह, चौदह, पंद्रह, सोलह, सत्रह, अठारह, उन्नीस, बीस!", vIdx: 0 },
+            { id: "nu7", title: "Five Little Ducks", emoji: "🦆", lang: "EN", text: "Five little ducks went swimming one day, Over the hill and far away!", vIdx: 1 },
+            { id: "nu8", title: "Easy Addition (1 + 1 = 2)", emoji: "➕", lang: "EN", text: "1 juicy apple + 1 juicy apple = 2 delicious apples! Math is super fun!", vIdx: 2 },
+            { id: "nu9", title: "Number Train 1 to 10", emoji: "🖐️", lang: "EN", text: "Count the colorful wagons on the train from 1 to 10 with cute animals!", vIdx: 3 },
+            { id: "nu10", title: "Ten Green Bottles", emoji: "🍼", lang: "EN", text: "Ten green bottles hanging on the wall! Count down from 10 to 1!", vIdx: 4 }
+          ]
+        }
+      };
+
+      // State
+      let currentCategoryKey = 'rhymes';
+      let currentPlayingItem = null;
+      let isVideoMode = false;
+
+      // DOM Elements
+      const startOverlay = document.getElementById('start-overlay');
+      const startBtn = document.getElementById('start-app-btn');
+      const sidebarNav = document.getElementById('sidebar-nav');
+      const videoCardsGrid = document.getElementById('video-cards-grid');
+      const activeCategoryTitle = document.getElementById('active-category-title');
+      const lessonCountTag = document.getElementById('lesson-count-tag');
+      const stageBackdrop = document.getElementById('stage-backdrop');
+      const stageIcon = document.getElementById('stage-icon');
+      const stageText = document.getElementById('stage-text');
+      const directVideoPlayer = document.getElementById('direct-video-player');
+      const directVideoSource = document.getElementById('direct-video-source');
+      const nowPlayingText = document.getElementById('now-playing-text');
+      const btnReplayVoice = document.getElementById('btn-replay-voice');
+      const btnToggleVideo = document.getElementById('btn-toggle-video');
+      const contentScrollArea = document.getElementById('content-scroll-area');
+
+      // Fullscreen Trigger
+      function requestFullscreenMode() {
+        const doc = document.documentElement;
+        if (doc.requestFullscreen) doc.requestFullscreen().catch(() => {});
+        else if (doc.webkitRequestFullscreen) doc.webkitRequestFullscreen();
+      }
+
+      startBtn.addEventListener('click', () => {
+        requestFullscreenMode();
+        startOverlay.classList.add('hidden');
+        playLesson(videoData[currentCategoryKey].videos[0]);
+      });
+
+      // Cheerful Voice Narrator
+      function playVoiceNarration(text, lang = 'HI') {
+        if ('speechSynthesis' in window) {
+          window.speechSynthesis.cancel();
+          const utter = new SpeechSynthesisUtterance(text);
+          utter.lang = lang === 'HI' ? 'hi-IN' : 'en-US';
+          utter.rate = 0.9;
+          utter.pitch = 1.15;
+          window.speechSynthesis.speak(utter);
+        }
+      }
+
+      btnReplayVoice.addEventListener('click', () => {
+        if (currentPlayingItem) {
+          playVoiceNarration(currentPlayingItem.text, currentPlayingItem.lang);
+        }
+      });
+
+      btnToggleVideo.addEventListener('click', () => {
+        isVideoMode = !isVideoMode;
+        updateStageDisplay();
+      });
+
+      function updateStageDisplay() {
+        if (isVideoMode) {
+          stageBackdrop.style.display = 'none';
+          directVideoPlayer.style.display = 'block';
+          btnToggleVideo.innerHTML = '<span>🎨 Cartoon Mode</span>';
+          directVideoPlayer.play().catch(() => {});
+        } else {
+          directVideoPlayer.pause();
+          directVideoPlayer.style.display = 'none';
+          stageBackdrop.style.display = 'flex';
+          btnToggleVideo.innerHTML = '<span>🎬 Video Mode</span>';
+          if (currentPlayingItem) {
+            playVoiceNarration(currentPlayingItem.text, currentPlayingItem.lang);
+          }
+        }
+      }
+
+      // Play Lesson Function (100% Guaranteed Native Execution)
+      function playLesson(item) {
+        if (!item) return;
+        currentPlayingItem = item;
+
+        // Update Labels & Stage
+        nowPlayingText.textContent = `${item.emoji} [${item.lang}] ${item.title}`;
+        stageIcon.textContent = item.emoji;
+        stageText.textContent = item.text;
+
+        // Set direct MP4 source
+        const streamUrl = directVideoPool[item.vIdx % directVideoPool.length];
+        directVideoSource.src = streamUrl;
+        directVideoPlayer.load();
+
+        updateStageDisplay();
+
+        // Highlight selected compact card
+        document.querySelectorAll('.video-card').forEach((card) => {
+          if (card.dataset.id === item.id) {
+            card.classList.add('active-playing');
+          } else {
+            card.classList.remove('active-playing');
+          }
+        });
+      }
+
+      // Render Navigation
+      function renderNav() {
+        const footer = sidebarNav.querySelector('.sidebar-footer');
+        sidebarNav.innerHTML = '<span class="nav-label">Categories</span>';
+
+        Object.keys(videoData).forEach((key) => {
+          const cat = videoData[key];
+          const btn = document.createElement('button');
+          btn.className = `nav-btn ${key === currentCategoryKey ? 'active' : ''}`;
+          btn.innerHTML = `<span class="nav-emoji">${cat.emoji}</span><span>${cat.name}</span>`;
+
+          btn.addEventListener('click', () => {
+            if (currentCategoryKey !== key) {
+              currentCategoryKey = key;
+              updateNavSelection();
+              renderCardsGrid();
+            }
+          });
+
+          sidebarNav.appendChild(btn);
+        });
+
+        if (footer) sidebarNav.appendChild(footer);
+      }
+
+      function updateNavSelection() {
+        const buttons = sidebarNav.querySelectorAll('.nav-btn');
+        const keys = Object.keys(videoData);
+        buttons.forEach((btn, i) => {
+          if (keys[i] === currentCategoryKey) btn.classList.add('active');
+          else btn.classList.remove('active');
+        });
+      }
+
+      // Render Small Title Icons Grid
+      function renderCardsGrid() {
+        const cat = videoData[currentCategoryKey];
+        activeCategoryTitle.innerHTML = `${cat.emoji} ${cat.name}`;
+        lessonCountTag.textContent = `${cat.videos.length} Lessons`;
+        videoCardsGrid.innerHTML = '';
+
+        cat.videos.forEach((video) => {
+          const card = document.createElement('div');
+          card.className = `video-card ${currentPlayingItem && currentPlayingItem.id === video.id ? 'active-playing' : ''}`;
+          card.dataset.id = video.id;
+          card.setAttribute('role', 'button');
+          card.setAttribute('tabindex', '0');
+
+          // Small compact title & icon layout
+          card.innerHTML = `
+            <div class="card-small-icon">
+              <span class="card-lang-dot">${video.lang}</span>
+              <span>${video.emoji}</span>
+            </div>
+            <div class="card-info">
+              <div class="card-title">${video.title}</div>
+              <div class="card-action-text">▶ Play Now</div>
+            </div>
+          `;
+
+          const triggerPlay = () => {
+            playLesson(video);
+            contentScrollArea.scrollTo({ top: 0, behavior: 'smooth' });
+          };
+
+          card.addEventListener('click', triggerPlay);
+          card.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              triggerPlay();
+            }
+          });
+
+          videoCardsGrid.appendChild(card);
+        });
+      }
+
+      // Initialize
+      renderNav();
+      renderCardsGrid();
+    })();
+  </script>
+</body>
+</html>
